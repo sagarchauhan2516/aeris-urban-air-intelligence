@@ -81,12 +81,6 @@ export async function POST(request: NextRequest) {
       ...body.aqi,
       city: sanitizeText(body.aqi.city, 64, 'Your Location'),
       dominantPollutant: sanitizeText(body.aqi.dominantPollutant, 16, 'PM2.5'),
-      ventilationWindow: body.aqi.ventilationWindow || {
-        bestHourStart: 12,
-        label: '12:00 PM - 02:00 PM',
-        avgNaqi: Math.min(body.aqi.currentNaqi, 150),
-        advice: 'Open windows briefly during afternoon warmth when surface inversion lifts.',
-      },
     };
 
     const members = sanitizeMembers(body.members);

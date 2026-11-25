@@ -107,11 +107,9 @@ function computeMemberRisk(member: FamilyMember, aqi: AQISummary): MemberRisk {
   const condLabel =
     member.conditions.filter((c) => c !== 'none').join(', ') || member.ageGroup;
 
-  const ventLabel = aqi.ventilationWindow?.label || '12:00 PM - 02:00 PM';
-
   const summaryMap: Record<RiskLevel, string> = {
     critical: `Severe respiratory/cardiac vulnerability (${condLabel}). Continuous indoor air filtration mandatory; strictly avoid outdoor air.`,
-    high: `High susceptibility (${condLabel}). Restrict outdoor activity strictly to ${ventLabel}; keep rescue medications immediately accessible.`,
+    high: `High susceptibility (${condLabel}). Restrict outdoor activity strictly to ${aqi.ventilationWindow.label}; keep rescue medications immediately accessible.`,
     medium: `Moderate sensitivity (${condLabel}). Avoid prolonged physical exertion during peak smog hours; wear N95 during transit.`,
     low: `Low risk profile (${condLabel}). Normal household routines safe; maintain adequate hydration.`,
   };
@@ -124,7 +122,7 @@ function computeMemberRisk(member: FamilyMember, aqi: AQISummary): MemberRisk {
     safeHours:
       riskLevel === 'critical'
         ? 'Indoor filtered only today'
-        : ventLabel,
+        : aqi.ventilationWindow.label,
   };
 }
 
@@ -314,12 +312,6 @@ export function buildHeuristicBrief(
   members: FamilyMember[]
 ): FamilyAirBrief {
   const naqi = aqi.currentNaqi;
-  const ventLabel = aqi.ventilationWindow?.label || '12:00 PM - 02:00 PM';
-  const ventAdvice =
-    aqi.ventilationWindow?.advice ||
-    'Keep windows closed during peak traffic hours; open briefly in the afternoon.';
-  const ventAvgNaqi = aqi.ventilationWindow?.avgNaqi ?? Math.min(naqi, 150);
-
   const memberRisks = members.map((m) => computeMemberRisk(m, aqi));
 
   const actionCards: ActionCard[] = [];
@@ -328,29 +320,29 @@ export function buildHeuristicBrief(
     actionCards.push({
       id: 'outdoor-limit',
       title: 'Pause Outdoor Play & Morning Runs',
-      description: `Current ${aqi.dominantPollutant} pushes NAQI to ${naqi} (${aqi.category}). Shift outdoor activity to ${ventLabel} or keep it indoors.`,
+      description: `Current ${aqi.dominantPollutant} pushes NAQI to ${naqi} (${aqi.category}). Shift outdoor activity to ${aqi.ventilationWindow.label} or keep it indoors.`,
       category: 'outdoor',
       priority: 'urgent',
     });
     actionCards.push({
       id: 'hepa-seal',
       title: 'Seal Windows & Run Purifier on Medium/High',
-      description: ventAdvice,
+      description: aqi.ventilationWindow.advice,
       category: 'indoor',
       priority: 'warning',
     });
   } else if (naqi > 100) {
     actionCards.push({
       id: 'window-timing',
-      title: `Best Outdoor Window: ${ventLabel}`,
-      description: `Air quality dips to NAQI ~${ventAvgNaqi} during this window — ideal for errands and short walks.`,
+      title: `Best Outdoor Window: ${aqi.ventilationWindow.label}`,
+      description: `Air quality dips to NAQI ~${aqi.ventilationWindow.avgNaqi} during this window — ideal for errands and short walks.`,
       category: 'outdoor',
       priority: 'warning',
     });
     actionCards.push({
       id: 'indoor-vent',
       title: 'Timed Cross-Ventilation',
-      description: ventAdvice,
+      description: aqi.ventilationWindow.advice,
       category: 'indoor',
       priority: 'info',
     });
@@ -398,7 +390,7 @@ export function buildHeuristicBrief(
       : naqi > 200
         ? `Poor air in ${aqi.city} (NAQI ${naqi}) — protect sensitive members & time trips carefully.`
         : naqi > 100
-          ? `Moderate air in ${aqi.city} (NAQI ${naqi}) — plan outdoor time around ${ventLabel}.`
+          ? `Moderate air in ${aqi.city} (NAQI ${naqi}) — plan outdoor time around ${aqi.ventilationWindow.label}.`
           : `Clean air in ${aqi.city} (NAQI ${naqi}) — enjoy outdoor routines safely.`;
 
   const healthPrescription = buildHealthPrescription(aqi, members);
@@ -428,9 +420,6 @@ export async function generateGeminiBrief(
     'You are AERIS, a warm, precise urban air quality health advisor for families. ' +
     'Always return valid JSON matching the exact schema requested.';
 
-  const ventLabel = aqi.ventilationWindow?.label || '12:00 PM - 02:00 PM';
-  const ventAvgNaqi = aqi.ventilationWindow?.avgNaqi ?? Math.min(aqi.currentNaqi, 150);
-
   const prompt = `
 Analyze the following live air quality telemetry and family household profiles, and generate a personalized daily air routine brief.
 
@@ -438,7 +427,7 @@ City: ${aqi.city}
 Current India NAQI: ${aqi.currentNaqi} (${aqi.category})
 Dominant Pollutant: ${aqi.dominantPollutant}
 Concentrations: PM2.5=${aqi.pm25} ug/m3, PM10=${aqi.pm10} ug/m3, NO2=${aqi.no2} ug/m3, O3=${aqi.o3} ug/m3
-Best 2-hour Ventilation Window: ${ventLabel} (avg NAQI ${ventAvgNaqi})
+Best 2-hour Ventilation Window: ${aqi.ventilationWindow.label} (avg NAQI ${aqi.ventilationWindow.avgNaqi})
 
 Family Members:
 ${JSON.stringify(members, null, 2)}
@@ -513,7 +502,7 @@ Generate 3 to 4 actionCards.
         name: typeof mr.name === 'string' ? mr.name : members[i]?.name ?? `Member ${i + 1}`,
         riskLevel: validRisks.includes(mr.riskLevel) ? mr.riskLevel : 'medium',
         summary: typeof mr.summary === 'string' ? mr.summary : '',
-        safeHours: typeof mr.safeHours === 'string' ? mr.safeHours : ventLabel,
+        safeHours: typeof mr.safeHours === 'string' ? mr.safeHours : aqi.ventilationWindow.label,
       }));
 
       const normalizedCards: ActionCard[] = parsed.actionCards.slice(0, 6).map((c, i) => ({

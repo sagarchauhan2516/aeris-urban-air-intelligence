@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ShieldCheck } from 'lucide-react';
 import { AgeGroup, FamilyMember, HealthCondition } from '@/types';
 
 interface FamilyProfilesProps {
@@ -138,6 +138,14 @@ export function FamilyProfiles({ members, onChange }: FamilyProfilesProps) {
           Add to Household
         </button>
       </form>
+
+      <div className="flex items-center justify-between text-[11px] text-slate-600 pt-2 border-t border-slate-100">
+        <span className="inline-flex items-center gap-1 font-medium text-slate-700">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          Private by design: profiles stay in local device memory
+        </span>
+        <span className="text-slate-600">Zero account friction</span>
+      </div>
     </div>
   );
 }
