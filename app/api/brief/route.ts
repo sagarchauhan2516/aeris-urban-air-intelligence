@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateGeminiBrief } from '@/lib/gemini';
-import { AgeGroup, AQISummary, FamilyMember, HealthCondition } from '@/types';
+import { AgeGroup, AQISummary, FamilyAirBrief, FamilyMember, HealthCondition } from '@/types';
 
 interface BriefRequestBody {
   aqi?: AQISummary;
@@ -8,11 +8,26 @@ interface BriefRequestBody {
 }
 
 interface CacheEntry {
-  brief: any;
+  brief: FamilyAirBrief;
   expiresAt: number;
 }
 
 const briefCache = new Map<string, CacheEntry>();
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string, maxRequests = 60, windowMs = 60000): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  if (entry.count >= maxRequests) {
+    return false;
+  }
+  entry.count += 1;
+  return true;
+}
 
 const VALID_AGES: AgeGroup[] = ['infant', 'child', 'adult', 'elderly'];
 const VALID_CONDITIONS: HealthCondition[] = [
@@ -56,6 +71,14 @@ function sanitizeMembers(raw: unknown): FamilyMember[] {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded. Please retry after a brief pause.' },
+      { status: 429, headers: { 'Retry-After': '60' } }
+    );
+  }
+
   let body: BriefRequestBody;
   try {
     body = (await request.json()) as BriefRequestBody;

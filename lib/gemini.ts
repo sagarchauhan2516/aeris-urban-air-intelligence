@@ -487,13 +487,14 @@ Generate 3 to 4 actionCards.
 
   for (const model of models) {
     try {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
-        apiKey
-      )}`;
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
       const response = await requestJson<GeminiApiResponse>(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
         body: requestBody,
         timeoutMs: 15000,
       });

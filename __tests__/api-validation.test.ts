@@ -21,10 +21,14 @@ describe('API Security & Input Sanitization Layer', () => {
     const VALID_CONDITIONS = ['none', 'asthma', 'heart', 'pregnant', 'copd', 'outdoor_worker'];
 
     return raw.slice(0, 15).map((item, idx) => {
-      const rec = (item && typeof item === 'object' ? item : {}) as any;
-      const ageGroup = VALID_AGES.includes(rec.ageGroup) ? rec.ageGroup : 'adult';
+      const rec = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>;
+      const ageGroup = typeof rec.ageGroup === 'string' && VALID_AGES.includes(rec.ageGroup)
+        ? rec.ageGroup
+        : 'adult';
       const rawConds = Array.isArray(rec.conditions) ? rec.conditions : ['none'];
-      const conditions = rawConds.filter((c: any) => VALID_CONDITIONS.includes(c)).slice(0, 5);
+      const conditions = rawConds
+        .filter((c: unknown): c is string => typeof c === 'string' && VALID_CONDITIONS.includes(c))
+        .slice(0, 5);
 
       return {
         id: typeof rec.id === 'string' ? rec.id.slice(0, 32) : `m-${idx}`,

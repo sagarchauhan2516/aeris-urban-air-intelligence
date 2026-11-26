@@ -48,9 +48,17 @@ export function HealthPrescriptionCard({ prescription }: HealthPrescriptionCardP
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-1.5 p-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-semibold">
+        <div
+          role="tablist"
+          aria-label="Household health prescription sections"
+          className="flex items-center gap-1.5 p-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-semibold"
+        >
           <button
             type="button"
+            role="tab"
+            id="tab-nutrition"
+            aria-selected={activeTab === 'nutrition'}
+            aria-controls="nutrition-tabpanel"
             onClick={() => setActiveTab('nutrition')}
             className={`px-3 py-1.5 rounded-md transition ${
               activeTab === 'nutrition'
@@ -62,6 +70,10 @@ export function HealthPrescriptionCard({ prescription }: HealthPrescriptionCardP
           </button>
           <button
             type="button"
+            role="tab"
+            id="tab-medical"
+            aria-selected={activeTab === 'medical'}
+            aria-controls="medical-tabpanel"
             onClick={() => setActiveTab('medical')}
             className={`px-3 py-1.5 rounded-md transition ${
               activeTab === 'medical'
@@ -73,6 +85,10 @@ export function HealthPrescriptionCard({ prescription }: HealthPrescriptionCardP
           </button>
           <button
             type="button"
+            role="tab"
+            id="tab-roadmap"
+            aria-selected={activeTab === 'roadmap'}
+            aria-controls="roadmap-tabpanel"
             onClick={() => setActiveTab('roadmap')}
             className={`px-3 py-1.5 rounded-md transition ${
               activeTab === 'roadmap'
@@ -87,7 +103,12 @@ export function HealthPrescriptionCard({ prescription }: HealthPrescriptionCardP
 
       {/* TAB 1: What to Consume (Nutrition & Hydration) */}
       {activeTab === 'nutrition' && (
-        <div className="space-y-6">
+        <div
+          role="tabpanel"
+          id="nutrition-tabpanel"
+          aria-labelledby="tab-nutrition"
+          className="space-y-6"
+        >
           {/* Hydration Banner */}
           <div className="rounded-xl bg-sky-50/70 border border-sky-200 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
@@ -171,7 +192,12 @@ export function HealthPrescriptionCard({ prescription }: HealthPrescriptionCardP
 
       {/* TAB 2: Medical Protocols & Precautions */}
       {activeTab === 'medical' && (
-        <div className="space-y-5">
+        <div
+          role="tabpanel"
+          id="medical-tabpanel"
+          aria-labelledby="tab-medical"
+          className="space-y-5"
+        >
           {/* Member Specific Guidance */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
@@ -221,7 +247,12 @@ export function HealthPrescriptionCard({ prescription }: HealthPrescriptionCardP
 
       {/* TAB 3: Future Implementation Roadmap */}
       {activeTab === 'roadmap' && (
-        <div className="space-y-4">
+        <div
+          role="tabpanel"
+          id="roadmap-tabpanel"
+          aria-labelledby="tab-roadmap"
+          className="space-y-4"
+        >
           <p className="text-xs text-slate-600 leading-relaxed">
             Smog is not an acute 1-day event; it is an annual meteorological reality in urban India.
             Here is a structured engineering and lifestyle roadmap to permanently insulate your family.

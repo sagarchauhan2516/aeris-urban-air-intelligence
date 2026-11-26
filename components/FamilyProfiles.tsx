@@ -93,14 +93,16 @@ export function FamilyProfiles({ members, onChange }: FamilyProfilesProps) {
       </div>
 
       <form onSubmit={handleAdd} className="pt-3 border-t border-slate-200 space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+        <label htmlFor="member-name-input" className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">
           Add Member
-        </p>
+        </label>
         <input
+          id="member-name-input"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name (e.g. Aarav)"
+          aria-label="New family member name"
           maxLength={32}
           className="w-full bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900"
         />

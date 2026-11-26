@@ -262,11 +262,13 @@ export function MitigationSimulator({ aqi }: MitigationSimulatorProps) {
 
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <label className="text-[11px] text-slate-500 block mb-1">Room Area (sq ft)</label>
+                <label htmlFor="room-area-input" className="text-[11px] text-slate-500 block mb-1">Room Area (sq ft)</label>
                 <input
+                  id="room-area-input"
                   type="number"
                   min="50"
                   max="1000"
+                  aria-label="Room Area in square feet"
                   value={roomArea}
                   onChange={(e) => setRoomArea(Math.max(20, Number(e.target.value)))}
                   className="w-full bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-900 font-semibold focus:outline-none focus:ring-1 focus:ring-slate-900"
@@ -274,11 +276,13 @@ export function MitigationSimulator({ aqi }: MitigationSimulatorProps) {
               </div>
 
               <div>
-                <label className="text-[11px] text-slate-500 block mb-1">Ceiling Height (ft)</label>
+                <label htmlFor="ceiling-height-input" className="text-[11px] text-slate-500 block mb-1">Ceiling Height (ft)</label>
                 <input
+                  id="ceiling-height-input"
                   type="number"
                   min="7"
                   max="20"
+                  aria-label="Ceiling Height in feet"
                   value={ceilingHeight}
                   onChange={(e) => setCeilingHeight(Math.max(6, Number(e.target.value)))}
                   className="w-full bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-900 font-semibold focus:outline-none focus:ring-1 focus:ring-slate-900"

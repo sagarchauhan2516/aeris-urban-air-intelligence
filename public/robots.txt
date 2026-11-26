@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://aeris-urban-air-intelligence.vercel.app/sitemap.xml
