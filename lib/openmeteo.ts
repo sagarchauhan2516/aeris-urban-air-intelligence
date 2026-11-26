@@ -45,6 +45,15 @@ function safeNum(val: number | null | undefined, fallback = 0): number {
   return typeof val === 'number' && !Number.isNaN(val) ? Math.round(val * 10) / 10 : fallback;
 }
 
+/**
+ * Fetches real-time, past 7-day, and 24-hour forecast atmospheric telemetry from Open-Meteo Air Quality API
+ * and converts the raw chemical concentrations into CPCB India NAQI scores and clinical ventilation models.
+ *
+ * @param latitude - Latitude coordinate in decimal degrees (-90 to +90)
+ * @param longitude - Longitude coordinate in decimal degrees (-180 to +180)
+ * @param cityName - Human-readable municipality or landmark label
+ * @returns Complete AQISummary with current NAQI, hourly trend, safe ventilation window, and 7-day history
+ */
 export async function fetchOpenMeteoAQI(
   latitude: number,
   longitude: number,

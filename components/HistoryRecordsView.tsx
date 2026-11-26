@@ -50,15 +50,18 @@ export function HistoryRecordsView({ history, city }: HistoryRecordsViewProps) {
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
+            aria-controls="history-records-content"
+            aria-label={expanded ? 'Collapse 7-day historical records' : 'Expand 7-day historical records'}
             className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
           >
-            {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {expanded ? <ChevronUp className="w-4 h-4" aria-hidden="true" /> : <ChevronDown className="w-4 h-4" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
       {expanded && (
-        <div className="space-y-4">
+        <div id="history-records-content" className="space-y-4">
           {/* Trend Banner */}
           <div className="rounded-lg bg-slate-50 border border-slate-200 px-4 py-3 flex items-start gap-3">
             <div className="p-1 rounded bg-slate-200/80 text-slate-700 mt-0.5">

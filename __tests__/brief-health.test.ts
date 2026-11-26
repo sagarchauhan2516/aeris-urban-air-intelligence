@@ -16,9 +16,12 @@ const mockAqiSevere: AQISummary = {
   co: 1500,
   hourly: [],
   ventilationWindow: {
-    bestHourStart: 13,
+    startHour: '13:00',
+    endHour: '14:00',
     label: '01:00 PM – 02:00 PM',
     avgNaqi: 180,
+    minNaqi: 170,
+    status: 'caution',
     advice: 'Open windows briefly.',
   },
   updatedAt: new Date().toISOString(),

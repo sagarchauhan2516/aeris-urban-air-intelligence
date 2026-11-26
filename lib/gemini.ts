@@ -307,6 +307,15 @@ export function buildHealthPrescription(
   };
 }
 
+/**
+ * Rule-based heuristic fallback generator for FamilyAirBrief.
+ * Guarantees zero downtime and complete clinical advisories when external GenAI APIs
+ * are unconfigured, rate-limited, or experiencing network latency.
+ *
+ * @param aqi - Complete AQI summary including criteria pollutant levels and ventilation windows
+ * @param members - Array of configured household family member profiles
+ * @returns Fully-structured FamilyAirBrief with member risks, nutrition prescriptions, and commute advice
+ */
 export function buildHeuristicBrief(
   aqi: AQISummary,
   members: FamilyMember[]
@@ -406,6 +415,15 @@ export function buildHeuristicBrief(
   };
 }
 
+/**
+ * Generates an AI-tailored household health advisory brief using Google Gemini.
+ * Employs structured JSON schema output and seamlessly falls back to local clinical heuristics
+ * if API quota is reached or network is unavailable.
+ *
+ * @param aqi - Complete AQI summary including criteria pollutant levels and ventilation windows
+ * @param members - Array of configured household family member profiles
+ * @returns AI or heuristic generated FamilyAirBrief personalized to vulnerable family cohorts
+ */
 export async function generateGeminiBrief(
   aqi: AQISummary,
   members: FamilyMember[]

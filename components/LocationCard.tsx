@@ -106,15 +106,24 @@ export function LocationCard({ aqi, loading, onOpenPollutantGuide }: LocationCar
           ].map((item) => (
             <div
               key={item.label}
+              role="button"
+              tabIndex={0}
+              aria-label={`View clinical guide and health standards for ${item.label}`}
               onClick={() => onOpenPollutantGuide?.(item.key)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onOpenPollutantGuide?.(item.key);
+                }
+              }}
               title={`Click for clinical dossier on ${item.label}`}
-              className="group rounded-lg bg-slate-50/90 border border-slate-200/80 p-3.5 flex flex-col justify-between hover:bg-slate-100/80 hover:border-slate-300 transition cursor-pointer"
+              className="group rounded-lg bg-slate-50/90 border border-slate-200/80 p-3.5 flex flex-col justify-between hover:bg-slate-100/80 hover:border-slate-300 transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-900 transition">
                   {item.label}
                 </span>
-                <Info className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition" />
+                <Info className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition" aria-hidden="true" />
               </div>
               <div className="my-2">
                 <span className="text-2xl font-bold text-slate-900 tabular-nums">

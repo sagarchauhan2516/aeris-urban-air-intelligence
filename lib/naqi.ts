@@ -64,6 +64,15 @@ function computeSubIndex(concentration: number, table: Breakpoint[]): number {
   return 500;
 }
 
+/**
+ * Translates a numeric NAQI score into its official CPCB qualitative band and standardized hex color code.
+ *
+ * @param naqi - Numeric National Air Quality Index (0-500)
+ * @returns Object containing the official category string and UI color hex
+ * @example
+ * getNAQICategory(42) // { category: 'Good', color: '#10B981' }
+ * getNAQICategory(350) // { category: 'Very Poor', color: '#EF4444' }
+ */
 export function getNAQICategory(naqi: number): { category: NAQICategory; color: string } {
   if (naqi <= 50) return { category: 'Good', color: '#10B981' };
   if (naqi <= 100) return { category: 'Satisfactory', color: '#84CC16' };
@@ -81,6 +90,13 @@ export interface PollutantInput {
   coUgM3: number;
 }
 
+/**
+ * Calculates the holistic India National Air Quality Index (NAQI) using the Central Pollution Control Board (CPCB)
+ * linear piecewise interpolation standard across all 5 monitored criteria pollutants.
+ *
+ * @param input - Atmospheric concentrations: PM2.5 (µg/m³), PM10 (µg/m³), NO2 (µg/m³), O3 (µg/m³), and CO (µg/m³)
+ * @returns Combined NAQI score, qualitative tier, hex color, and dominant driver pollutant
+ */
 export function calculateIndiaNAQI(input: PollutantInput): {
   naqi: number;
   category: NAQICategory;

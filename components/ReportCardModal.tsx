@@ -122,9 +122,10 @@ export function ShareReportButton({ aqi, brief }: ShareReportButtonProps) {
       type="button"
       onClick={handleDownloadCard}
       disabled={!aqi || !brief}
+      aria-label="Export high-resolution air quality dossier image (2x PNG)"
       className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-slate-900 hover:bg-slate-800 text-white transition disabled:opacity-40"
     >
-      <Download className="w-3.5 h-3.5" />
+      <Download className="w-3.5 h-3.5" aria-hidden="true" />
       <span>Export Report (2x PNG)</span>
     </button>
   );

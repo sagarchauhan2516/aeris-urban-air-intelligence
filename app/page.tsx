@@ -261,6 +261,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#f4f6f9] text-slate-900">
+      {/* Skip to Main Content Link for WCAG Accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-slate-900 focus:text-white focus:rounded-md focus:shadow-xl focus:font-semibold focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {/* Mobile Backdrop */}
       {mobileNavOpen && (
         <div
@@ -271,6 +279,7 @@ export default function HomePage() {
 
       {/* Left Control Sidebar */}
       <aside
+        aria-label="Location and Household Setup"
         className={`fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-slate-200 flex flex-col justify-between transform transition-transform duration-200 ease-out lg:static lg:translate-x-0 shrink-0 ${
           mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
@@ -315,26 +324,32 @@ export default function HomePage() {
                 onClick={() => loadAQI(coords.lat, coords.lon, coords.city)}
                 disabled={loadingAqi}
                 title="Refresh live data"
+                aria-label="Refresh live atmospheric data"
                 className="text-slate-500 hover:text-slate-900 p-1 rounded transition disabled:opacity-40"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${loadingAqi ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${loadingAqi ? 'animate-spin' : ''}`} aria-hidden="true" />
               </button>
             </div>
 
             {/* Universal Autocomplete Search Box */}
             <div ref={searchContainerRef} className="relative">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
                 <input
                   id="search-location"
                   type="text"
+                  role="combobox"
+                  aria-expanded={searchOpen}
+                  aria-controls="city-search-results"
+                  aria-autocomplete="list"
+                  aria-label="Search city, town, or district"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search city, town or district..."
                   className="w-full bg-slate-50 border border-slate-300 rounded-md pl-8 pr-7 py-1.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
                 />
                 {isSearching ? (
-                  <Loader2 className="w-3.5 h-3.5 text-slate-400 animate-spin absolute right-2.5 top-1/2 -translate-y-1/2" />
+                  <Loader2 className="w-3.5 h-3.5 text-slate-400 animate-spin absolute right-2.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
                 ) : searchQuery ? (
                   <button
                     type="button"
@@ -343,21 +358,29 @@ export default function HomePage() {
                       setSearchResults([]);
                       setSearchOpen(false);
                     }}
+                    aria-label="Clear location search query"
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-0.5"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-3 h-3" aria-hidden="true" />
                   </button>
                 ) : null}
               </div>
 
               {/* Floating Autocomplete Dropdown */}
               {searchOpen && (
-                <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl z-50 max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs">
+                <div
+                  id="city-search-results"
+                  role="listbox"
+                  aria-label="City search results"
+                  className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl z-50 max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs"
+                >
                   {searchResults.length > 0 ? (
                     searchResults.map((item) => (
                       <button
                         key={`${item.id}-${item.latitude}`}
                         type="button"
+                        role="option"
+                        aria-selected={false}
                         onClick={() => handleSelectSearchResult(item)}
                         className="w-full text-left px-3 py-2 hover:bg-slate-50 transition flex items-center justify-between group"
                       >
@@ -369,7 +392,7 @@ export default function HomePage() {
                             {[item.state, item.country].filter(Boolean).join(', ')}
                           </span>
                         </div>
-                        <MapPin className="w-3 h-3 text-slate-300 group-hover:text-slate-700 shrink-0" />
+                        <MapPin className="w-3 h-3 text-slate-300 group-hover:text-slate-700 shrink-0" aria-hidden="true" />
                       </button>
                     ))
                   ) : (
@@ -472,7 +495,12 @@ export default function HomePage() {
         </header>
 
         {/* Scrollable Full-Width Canvas */}
-        <main className="flex-1 p-4 sm:p-6 space-y-6">
+        <main
+          id="main-content"
+          role="main"
+          aria-label="AERIS Air Quality Intelligence Workspace"
+          className="flex-1 p-4 sm:p-6 space-y-6"
+        >
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 flex items-center justify-between gap-3 text-xs text-red-800">
               <div className="flex items-center gap-2">

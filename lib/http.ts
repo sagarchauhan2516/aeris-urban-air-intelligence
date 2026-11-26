@@ -9,8 +9,13 @@ interface RequestOptions {
 }
 
 /**
- * Node 16-safe HTTPS JSON request helper.
- * Avoids relying on global `fetch` which is absent in Node v16.15.0.
+ * Lightweight, zero-dependency HTTPS JSON request helper.
+ * Compatible with Node.js runtimes without native global fetch.
+ *
+ * @param urlString - Complete HTTPS endpoint URL including query parameters
+ * @param options - Request options including HTTP method, headers, JSON body, and timeout
+ * @returns Parsed JSON response payload typed as T
+ * @throws Error on non-2xx status code, invalid JSON, or connection timeout
  */
 export function requestJson<T>(urlString: string, options: RequestOptions = {}): Promise<T> {
   return new Promise((resolve, reject) => {
