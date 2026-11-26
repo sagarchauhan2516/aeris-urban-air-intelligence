@@ -19,6 +19,8 @@
 *.mp4
 *.wav
 *.mp3
+*.ass
+*.srt
 
 # debug
 npm-debug.log*
